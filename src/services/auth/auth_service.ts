@@ -4,32 +4,46 @@ import jwt from 'jsonwebtoken';
 import { LoginUserDTO } from '../../DTOs/user/user_login_dto';
 
 export class AuthService {
-    async loginUser(loginUserDto: LoginUserDTO): Promise<string | null> {
+
+    async loginUser(loginUserDto: LoginUserDTO): Promise<any> {
         const { username, password } = loginUserDto;
-        
-        // Verificar si el usuario existe
-        const query = 'SELECT * FROM users WHERE username = $1';
-        const result = await pool.query(query, [username]);
 
-        if (result.rows.length === 0) {
-            return null; // Usuario no encontrado
+        try {
+            // Verificar si el usuario existe
+            const userQuery = 'SELECT * FROM users WHERE username = $1';
+            const result = await pool.query(userQuery, [username]);
+
+            if (result.rows.length === 0) {
+                return null;  // Usuario no encontrado
+            }
+
+            const user = result.rows[0];
+
+            // Verificar la contraseña
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                return null;  // Contraseña incorrecta
+            }
+
+            // Generar JWT
+            const token = jwt.sign(
+                { id: user.id, username: user.username, role: user.role_id },
+                process.env.JWT_SECRET as string,
+                { expiresIn: '24h' }
+            );
+
+            //token y los datos del usuario
+            return {
+                token,
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role_id
+                }
+            };
+        } catch (error: any) {
+            throw new Error(`Error logueando usuario: ${error.message}`);
         }
-
-        const user = result.rows[0];
-
-        // Verificar si la contraseña es correcta
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return null; // Contraseña incorrecta
-        }
-
-        // Generar el token JWT
-        const token = jwt.sign(
-            { userId: user.id, role: user.role_id }, // Payload del token
-            process.env.JWT_SECRET || 'secret', // Clave secreta para firmar el token
-            { expiresIn: '6h' } // El token expira en 1 hora
-        );
-
-        return token;
     }
 }
