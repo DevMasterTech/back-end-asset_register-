@@ -10,6 +10,12 @@ const app: Express = express();
 // Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+const corsOptions = {
+    origin: '*',
+    methods: ['*'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 
 //Conexión a db
 const startServer = async () => {
@@ -19,14 +25,6 @@ startServer();
 
 //Usar las rutas centralizadas
 app.use(routes)
-
-// Configuración de CORS
-const corsOptions = {
-    origin: '*',
-    methods: ['*'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-};
-app.use(cors(corsOptions));
 
 // Manejo de errores
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
