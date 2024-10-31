@@ -2,7 +2,7 @@ export class Asset {
     id?: number;
     name!: string;
     description!: string;
-    asset_type_id!: number;  // Relación con AssetType
+    asset_subtype_id!: number;  // Relación con AssetSubType
     branch_id!: number;  // Relación con Branch
     responsible_id!: number;  // Relación con ResponsiblePerson
     value!: number;
