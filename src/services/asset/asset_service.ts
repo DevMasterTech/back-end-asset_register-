@@ -33,8 +33,21 @@ export class AssetService {
         }
     }
 
+    async getAllAssets(): Promise<any[]> {
+        try {
+            // Llama al procedimiento almacenado
+            await pool.query('CALL get_assets_with_details()');
+    
+            // Selecciona de la tabla temporal
+            const result = await pool.query('SELECT * FROM temp_assets;');
+            return result.rows;  // Aquí se devuelven los datos
+        } catch (error: any) {
+            throw new Error(`Error al obtener los activos: ${error.message}`);
+        }
+    }
+    
     // Método para obtener todos los activos
-    // async getAllAssets(): Promise<any[]> {
+    // async getAllbrnachs(): Promise<any[]> {
     //     try {
     //         const query = `SELECT * FROM assets;`;
     //         const assets = await pool.query(query);
@@ -44,13 +57,4 @@ export class AssetService {
     //     }
     // }
 
-    async getAllAssets(): Promise<any[]> {
-        try {
-            // Llamada al procedimiento almacenado
-            const assets = await pool.query('SELECT * FROM get_assets_with_details();');
-            return assets.rows;
-        } catch (error: any) {
-            throw new Error(`Error al obtener los activos: ${error.message}`);
-        }
-    }
 }
