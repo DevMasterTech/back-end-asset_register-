@@ -55,6 +55,5 @@ export class AssetService {
     //     } catch (error: any) {
     //         throw new Error(`Error al obtener los activos: ${error.message}`);
     //     }
-    // }
-
+    //  }
 }
