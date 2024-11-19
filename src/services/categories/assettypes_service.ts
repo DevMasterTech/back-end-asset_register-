@@ -1,4 +1,3 @@
-import { Maintenance } from './../../models/maintenance/maintenance_model';
 import { pool } from "../../config/database/db";
 import { getAssettypesDto } from "../../DTOs/categories/assettypes";
 import { getAssetSubtypes } from "../../DTOs/categories/asset_subtype_dto";
