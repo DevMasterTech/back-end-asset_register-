@@ -4,5 +4,6 @@ import { AssettypesController } from "../../controllers/categories/assettypes_co
 const router = Router();
 
 router.get('/getAll', AssettypesController.getAllAssettypes)
+router.get('/getAllSubtypes', AssettypesController.getAllAssetSubtypes)
 
 export default router;
