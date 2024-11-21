@@ -6,6 +6,7 @@ import assetRoutes from './asset/asset_routes';
 import branchRoutes from './branch/branch_routes';
 import assettypesRoutes from './categories/assettypes_routes';
 import resposibleRoutes from './responsibles/responsibles_routes';
+import searchAssetsRouter from './search_assets/search_assets_routes';
 
 const router = Router();
 
@@ -16,7 +17,8 @@ const routes = [
     { path: '/api/asset', route: assetRoutes, protected: true },
     { path: '/api/branches', route: branchRoutes, protected: true },
     { path: '/api/assettypes', route: assettypesRoutes, protected: true },
-    { path: '/api/responsibles', route: resposibleRoutes, protected: true }
+    { path: '/api/responsibles', route: resposibleRoutes, protected: true },
+    { path: '/api/searchassets', route: searchAssetsRouter, protected: false }
 ];
 
 // Registrar rutas
