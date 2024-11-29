@@ -12,7 +12,7 @@ export class AuthController {
                 res.status(400).json({ message: 'Username y password son requeridos' });
                 return;
             }
-
+            
             // Intentar logear el usuario
             const loginResult = await authService.loginUser({ username, password });
 
@@ -22,7 +22,7 @@ export class AuthController {
             }
 
             const { token, user } = loginResult;
-
+            
             res.status(200).json({
                 message: 'Ingreso exitoso',
                 user: {
