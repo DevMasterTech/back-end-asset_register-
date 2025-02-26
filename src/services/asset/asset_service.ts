@@ -34,14 +34,31 @@ export class AssetService {
 
     async getAllAssets(): Promise<any[]> {
         try {
-            // Llama al procedimiento almacenado
-            await pool.query('CALL get_assets_with_details()');
+            const query = `
+                SELECT 
+                    a.id, 
+                    a.name, 
+                    a.description, 
+                    a.value, 
+                    a.status, 
+                    a.specifications, 
+                    a.registration_date, 
+                    a.lifespan, 
+                    a.depreciation_method,
+                    at.name AS asset_subtype_name,
+                    b.name AS branch_name,
+                    rp.name AS responsible_person_name
+                FROM assets a
+                JOIN assetsubtypes at ON a.asset_subtype_id = at.id
+                JOIN branches b ON a.branch_id = b.id
+                JOIN responsiblepersons rp ON a.responsible_id = rp.id;
+            `;
     
-            // Selecciona de la tabla temporal
-            const result = await pool.query('SELECT * FROM temp_assets;');
-            return result.rows;  // Aquí se devuelven los datos
+            const result = await pool.query(query);
+            return result.rows;
         } catch (error: any) {
             throw new Error(`Error al obtener los activos: ${error.message}`);
         }
     }
+    
 }

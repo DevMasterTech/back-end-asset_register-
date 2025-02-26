@@ -3,4 +3,5 @@ export class ResponsiblePerson {
     name!: string;
     position!: string;
     contact!: string;
+    code!: number;
 }
