@@ -1,4 +1,6 @@
 dist/
 node_modules/
 README.md
-.env 
+prisma/migrations/
+!prisma/schema.prisma
+.env

@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  Active
+  Maintenance
+  Damaged
+  Retired
+}
+
+enum DepreciationMethod {
+  StraightLine
+  DecliningBalance
+}
+
+model Asset {
+  id               Int              @id @default(autoincrement())
+  name             String
+  description      String
+  asset_subtype_id Int
+  branch_id        Int
+  responsible_id   Int
+  value            Float
+  status           Status
+  specifications   Json
+  registration_date DateTime        @default(now())
+  lifespan         Int
+  depreciation_method DepreciationMethod
+  assetImages      AssetImage[]
+  maintenances     Maintenance[]
+  transfers        Transfer[]
+  depreciations    Depreciation[]
+  assetSubType     AssetSubType     @relation(fields: [asset_subtype_id], references: [id])
+  branch           Branch           @relation(fields: [branch_id], references: [id])
+}
+
+model AssetImage {
+  id        Int    @id @default(autoincrement())
+  asset_id  Int
+  image_path String
+  upload_date DateTime
+  asset     Asset @relation(fields: [asset_id], references: [id])
+}
+
+model AssetSubType {
+  id          Int       @id @default(autoincrement())
+  assettype_id Int
+  name        String
+  assets      Asset[]
+  assetType   AssetType @relation(fields: [assettype_id], references: [id])
+}
+
+model AssetType {
+  id        Int           @id @default(autoincrement())
+  name      String
+  subtypes  AssetSubType[]
+}
+
+model Branch {
+  id          Int       @id @default(autoincrement())
+  name        String
+  address     String
+  city        String
+  country     String
+  assets      Asset[]
+  transfersOrigin   Transfer[]  @relation("OriginBranch")
+  transfersDestination Transfer[] @relation("DestinationBranch")
+  responsiblePeople ResponsiblePerson[] // Relación inversa: una sucursal puede tener varios responsables
+}
+
+model Maintenance {
+  id              Int       @id @default(autoincrement())
+  asset_id        Int
+  maintenance_date DateTime
+  description     String
+  maintenance_type String
+  responsible_id  Int
+  observations    String
+  cost            Float
+  asset           Asset     @relation(fields: [asset_id], references: [id])
+  responsible     ResponsiblePerson @relation(fields: [responsible_id], references: [id])
+}
+
+model ResponsiblePerson {
+  id          Int       @id @default(autoincrement())
+  name        String
+  position    String
+  contact     String
+  code        Int       @unique
+  maintenances Maintenance[]
+  transfers   Transfer[]
+  branch_id   Int       // Campo para la relación con Branch
+  branch      Branch    @relation(fields: [branch_id], references: [id]) // Relación con Branch
+}
+
+// Modelo User con relación de uno a muchos hacia Role
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String
+  email     String   @unique
+  password  String
+  roles     Role[]   // Relación de uno a muchos: un usuario puede tener muchos roles
+}
+
+// Modelo Role con relación inversa hacia User (también uno a muchos)
+model Role {
+  id        Int      @id @default(autoincrement())
+  role      String
+  users     User[]   // Relación inversa: un rol puede estar asignado a muchos usuarios
+}
+
+model Depreciation {
+  id         Int      @id @default(autoincrement())
+  asset_id   Int
+  depreciation_value Float
+  date       DateTime @default(now())
+  asset      Asset    @relation(fields: [asset_id], references: [id])
+}
+
+model Transfer {
+  id                   Int        @id @default(autoincrement())
+  asset_id             Int
+  origin_branch_id     Int
+  destination_branch_id Int
+  transfer_date        DateTime
+  responsible_id       Int
+  observations         String
+  status               Status
+  asset                Asset      @relation(fields: [asset_id], references: [id])
+  originBranch         Branch     @relation(name: "OriginBranch", fields: [origin_branch_id], references: [id])
+  destinationBranch    Branch     @relation(name: "DestinationBranch", fields: [destination_branch_id], references: [id])
+  responsible          ResponsiblePerson @relation(fields: [responsible_id], references: [id])
+}
