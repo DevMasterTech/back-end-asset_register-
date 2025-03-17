@@ -1,0 +1,25 @@
+@startuml asset_transfer_secuencieDiagram
+actor Admin as u
+participant "Sistema (Backend)" as s
+database "Base de Datos" as db
+
+== Iniciar Transferencia ==
+u -> s : Solicita transferencia de activo (activo, sucursal origen, sucursal destino, responsable)
+s -> db : Verifica existencia del activo y su disponibilidad
+db -> s : Retorna información del activo
+
+alt Activo disponible
+    s -> db : Registra la transferencia (origen, destino, responsable, fecha, estado: "Pendiente")
+    db -> s : Confirma registro
+    s -> u : Responde con éxito (Transferencia en proceso)
+else Activo no disponible
+    s -> u : Responde con error (Activo no transferible)
+end
+
+== Confirmar Transferencia ==
+u -> s : Confirma recepción del activo en la sucursal destino
+s -> db : Actualiza estado de la transferencia a "Completada"
+db -> s : Confirma actualización
+s -> u : Responde con éxito
+
+@enduml

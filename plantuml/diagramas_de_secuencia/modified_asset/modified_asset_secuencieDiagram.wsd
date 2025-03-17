@@ -1,0 +1,18 @@
+@startuml modified_asset_secuencieDiagram
+
+actor Admin as aAdmin
+participant "Sistema (Backend)" as Backend
+participant "Base de Datos" as DB
+
+== Modificar Activo ==
+
+aAdmin -> Backend: Solicita modificación de un activo (nuevos datos)
+Backend -> DB: Busca el activo por ID
+DB --> Backend: Retorna activo encontrado
+
+Backend -> DB: Actualiza los datos del activo
+DB --> Backend: Confirma actualización
+
+Backend --> aAdmin: Activo modificado con éxito
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml asset_add_secuencieDiagram
+actor Admin as u
+participant "Sistema (Backend)" as s
+database "Base de Datos" as db
+
+== Registrar Nuevo Activo ==
+u -> s : Solicita registrar un activo (nombre, descripción, tipo, sucursal, valor, etc.)
+s -> db : Verifica si ya existe un activo con los mismos datos
+db -> s : Retorna resultado de la verificación
+
+alt Activo no existe
+    s -> db : Guarda el nuevo activo en la base de datos
+    db -> s : Confirma registro
+    s -> u : Responde con éxito (Activo registrado)
+else Activo ya existe
+    s -> u : Responde con error (Activo duplicado)
+end
+
+@enduml

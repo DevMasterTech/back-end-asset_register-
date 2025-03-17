@@ -1,0 +1,25 @@
+@startuml asset_maintenance_secuencieDiagram
+actor Admin as u
+participant "Sistema (Backend)" as s
+database "Base de Datos" as db
+
+== Registrar Mantenimiento ==
+u -> s : Solicita registrar mantenimiento (activo, tipo, responsable, costo, observaciones)
+s -> db : Verifica existencia del activo
+db -> s : Retorna información del activo
+
+alt Activo encontrado
+    s -> db : Guarda el mantenimiento en la base de datos
+    db -> s : Confirma registro
+    s -> u : Responde con éxito (Mantenimiento registrado)
+else Activo no encontrado
+    s -> u : Responde con error (Activo no existe)
+end
+
+== Consultar Historial de Mantenimiento ==
+u -> s : Solicita historial de mantenimiento de un activo
+s -> db : Busca mantenimientos asociados al activo
+db -> s : Retorna historial de mantenimientos
+s -> u : Muestra historial de mantenimiento
+
+@enduml

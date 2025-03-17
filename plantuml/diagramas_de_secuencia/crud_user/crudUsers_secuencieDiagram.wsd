@@ -1,0 +1,30 @@
+@startuml crudUsers_secuencieDiagram
+actor Admin as u
+participant "Sistema (Backend)" as s
+database "Base de Datos" as db
+
+== Crear Usuario ==
+u -> s : Solicita crear un usuario (nombre, email, contraseña, roles)
+s -> db : Guarda el usuario en la base de datos
+db -> s : Confirma la creación
+s -> u : Responde con éxito o error
+
+== Actualizar Usuario ==
+u -> s : Solicita actualizar datos del usuario
+s -> db : Modifica los datos en la base de datos
+db -> s : Confirma actualización
+s -> u : Responde con éxito o error
+
+== Eliminar Usuario ==
+u -> s : Solicita eliminar un usuario
+s -> db : Borra el usuario en la base de datos
+db -> s : Confirma eliminación
+s -> u : Responde con éxito o error
+
+== Iniciar Sesión ==
+u -> s : Envía credenciales (email y contraseña)
+s -> db : Verifica credenciales
+db -> s : Retorna datos del usuario si son correctas
+s -> u : Responde con éxito y token de sesión o error
+
+@enduml

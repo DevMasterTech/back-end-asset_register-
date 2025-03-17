@@ -1,0 +1,44 @@
+@startuml sheets_assets_secuencieDiagram
+actor Admin as r
+participant "Sistema (Backend)" as s
+database "Base de Datos" as db
+
+== 1️ Generar Hoja de Entrega ==
+r -> s : Solicita generar una hoja de entrega (activo, destinatario, fecha)
+s -> db : Verifica si el activo está disponible
+db -> s : Retorna estado del activo
+
+alt Activo disponible
+    s -> db : Registra la hoja de entrega
+    db -> s : Confirma registro
+    s -> r : Responde con éxito (Hoja de entrega generada)
+else Activo no disponible
+    s -> r : Responde con error
+end
+
+== 2️ Ver Hojas de Entrega ==
+r -> s : Solicita listado de hojas de entrega
+s -> db : Consulta hojas de entrega asociadas al usuario/sucursal
+db -> s : Retorna listado de hojas de entrega
+s -> r : Muestra hojas de entrega
+
+== 3️ Generar Hoja de Recepción ==
+r -> s : Solicita generar una hoja de recepción (activo recibido, responsable, fecha)
+s -> db : Verifica si la hoja de entrega correspondiente existe
+db -> s : Retorna validación
+
+alt Hoja de entrega válida
+    s -> db : Registra hoja de recepción
+    db -> s : Confirma registro
+    s -> r : Responde con éxito (Hoja de recepción generada)
+else Hoja de entrega no encontrada
+    s -> r : Responde con error
+end
+
+== 4️ Ver Hojas de Recepción ==
+r -> s : Solicita listado de hojas de recepción
+s -> db : Consulta hojas de recepción registradas
+db -> s : Retorna listado de hojas de recepción
+s -> r : Muestra hojas de recepción
+
+@enduml

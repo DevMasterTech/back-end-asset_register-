@@ -1,0 +1,28 @@
+@startuml vies_assets_secuencieDiagram
+
+actor Admin as aAdmin
+actor Jefe as aJefe
+actor Responsable as aResponsable
+participant "Sistema (Backend)" as Backend
+participant "Base de Datos" as DB
+
+== Ver todos los activos ==
+
+aAdmin -> Backend: Solicita lista de activos
+Backend -> DB: Consulta todos los activos
+DB --> Backend: Retorna todos los activos
+Backend --> aAdmin: Muestra todos los activos
+
+
+aJefe -> Backend: Solicita lista de activos
+Backend -> DB: Consulta todos los activos
+DB --> Backend: Retorna todos los activos
+Backend --> aJefe: Muestra todos los activos
+
+
+aResponsable -> Backend: Solicita lista de activos
+Backend -> DB: Consulta activos asignados al responsable
+DB --> Backend: Retorna solo activos del responsable
+Backend --> aResponsable: Muestra activos asignados
+
+@enduml

@@ -1,0 +1,103 @@
+@startuml useCasesDiagram
+left to right direction
+
+actor Jefe as aJefe
+actor Responsable as aResponsable
+actor Admin as aAdmin
+
+' Definir colores
+!define COLOR_ACTIVOS LightYellow
+!define COLOR_TRANSFERENCIAS LightBlue
+!define COLOR_MANTENIMIENTO LightGreen
+!define COLOR_HOJAS_ENTREGA LightCyan
+!define COLOR_USUARIOS LightGray
+
+' Gestión de Activos
+package "Gestión de Activos" as GestionActivos {
+    usecase "Agregar Activo" as U1
+    usecase "Modificar Activo" as U2
+    usecase "Eliminar Activo" as U3
+    usecase "Ver Todos los Activos" as U4
+    usecase "Ver Mis Activos" as U5
+    usecase "Ver Detalle del Activo" as U12
+    skinparam backgroundColor COLOR_ACTIVOS
+}
+
+' Gestión de Transferencias
+package "Gestión de Transferencias" as GestionTransferencias {
+    usecase "Registrar Transferencia" as U6
+    usecase "Ver Transferencias" as U7
+    usecase "Aprobar Transferencia" as U13
+    skinparam backgroundColor COLOR_TRANSFERENCIAS
+}
+
+' Gestión de Mantenimiento
+package "Gestión de Mantenimiento" as GestionMantenimiento {
+    usecase "Registrar Mantenimiento" as U8
+    usecase "Ver Historial de Mantenimiento" as U9
+    usecase "Solicitar Mantenimiento" as U14
+    skinparam backgroundColor COLOR_MANTENIMIENTO
+}
+
+' Hojas de Entrega y Recepción
+package "Hojas de Entrega y Recepción" as HojasEntregaRecepcion {
+    usecase "Generar Hoja de Entrega" as U10
+    usecase "Ver Hojas de Entrega" as U11
+    skinparam backgroundColor COLOR_HOJAS_ENTREGA
+}
+
+' Gestión de Usuarios
+package "Gestión de Usuarios" as GestionUsuarios {
+    usecase "Crear Usuario" as U15
+    usecase "Modificar Usuario" as U16
+    usecase "Eliminar Usuario" as U17
+    usecase "Ver Usuarios" as U18
+    usecase "Asignar Roles" as U19
+    skinparam backgroundColor COLOR_USUARIOS
+}
+
+' Relación de actores con los casos de uso
+aAdmin --> U1
+aAdmin --> U2
+aAdmin --> U3
+aAdmin --> U4
+aAdmin --> U5
+aAdmin --> U6
+aAdmin --> U7
+aAdmin --> U8
+aAdmin --> U9
+aAdmin --> U10
+aAdmin --> U11
+aAdmin --> U12
+aAdmin --> U13
+aAdmin --> U15
+aAdmin --> U16
+aAdmin --> U17
+aAdmin --> U18
+aAdmin --> U19
+
+aJefe --> U4
+aJefe --> U7
+aJefe --> U9
+aJefe --> U10
+aJefe --> U11
+aJefe --> U13
+aJefe --> U14
+
+aResponsable --> U5
+aResponsable --> U9
+aResponsable --> U10
+aResponsable --> U11
+aResponsable --> U14
+
+' Relaciones de inclusión y extensión
+U8 ..|> U12 : <<include>>
+U6 ..|> U4 : <<include>>
+U14 ..|> U8 : <<extend>>
+U13 ..|> U7 : <<extend>>
+
+' Posicionamiento de los actores
+aResponsable -up-> aJefe
+aJefe -up-> aAdmin
+
+@enduml
