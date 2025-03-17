@@ -1,4 +1,4 @@
-# Control Total de Activos
+# Control de Activos TechResources
 
 ## Descripción
 Control Total de Activos es una aplicación diseñada para gestionar el ciclo de vida de activos dentro de una organización. Permite registrar, mantener, transferir y depreciar activos, asegurando un control eficiente y organizado de los bienes.
@@ -18,8 +18,10 @@ Este proyecto utiliza las siguientes tecnologías:
 
 1. Clonar el repositorio:
 
+   ```bash
    git clone <https://github.com/DevMasterTech/back-end-asset_register-.git>
    cd control-total-activos
+   ```
 
 2. Instalar dependencias:
    ```bash
@@ -29,19 +31,19 @@ Este proyecto utiliza las siguientes tecnologías:
 3. Configurar variables de entorno:
    - Crear un archivo `.env` en la raíz del proyecto con la siguiente estructura:
      ```env
-        DB_HOST= ""
-        DB_PORT= ""
-        DB_USER= ""
-        DB_PASSWORD= ""
-        DB_NAME= ""
-        PORT= ""
-        JWT_SECRET= ""
+     DB_HOST=""
+     DB_PORT=""
+     DB_USER=""
+     DB_PASSWORD=""
+     DB_NAME=""
+     PORT=""
+     JWT_SECRET=""
 
-    # Si se trabaja con la rama feature/addAssets utilizar el esquema de variables de entorno anterior
-    # Si se trabaja con la rama asset-prismaORM trabajar con el siguiente esquema de variables de entorno
+     # Si se trabaja con la rama feature/addAssets utilizar el esquema de variables de entorno anterior
+     # Si se trabaja con la rama asset-prismaORM trabajar con el siguiente esquema de variables de entorno
 
-        DATABASE_URL=""
-        JWT_SECRET= ""
+     DATABASE_URL=""
+     JWT_SECRET=""
      ```
 
 4. Ejecutar migraciones de la base de datos con Prisma:
@@ -62,14 +64,91 @@ Este proyecto utiliza las siguientes tecnologías:
 
 ## Modelos de Base de Datos
 
-La aplicación gestiona activos con una base de datos PostgreSQL, modelada con Prisma. Los principales modelos incluyen:
+La aplicación gestiona activos con una base de datos PostgreSQL, modelada con Prisma. A continuación, se describe la estructura de la base de datos:
 
-- **Asset**: Representa los activos con atributos como nombre, estado, especificaciones, método de depreciación, etc.  
-- **Branch**: Sucursales donde se encuentran los activos.  
-- **Maintenance**: Registros de mantenimiento de activos.  
-- **Transfer**: Historial de transferencias de activos entre sucursales.  
-- **User y Role**: Gestión de usuarios y roles para el sistema.  
-- **ResponsiblePerson**: Personas responsables de los activos.  
+### **Asset (Activo)**
+Representa los activos de la organización.  
+
+| Campo               | Tipo de Dato  | Descripción |
+|---------------------|-------------|-------------|
+| `id`               | Int (PK)     | Identificador único del activo |
+| `name`             | String       | Nombre del activo |
+| `description`      | String       | Descripción del activo |
+| `asset_subtype_id` | Int (FK)     | Relación con el subtipo de activo |
+| `branch_id`        | Int (FK)     | Relación con la sucursal donde está ubicado |
+| `responsible_id`   | Int (FK)     | Persona responsable del activo |
+| `value`           | Float        | Valor monetario del activo |
+| `status`          | Enum         | Estado del activo (Active, Maintenance, Damaged, Retired) |
+| `specifications`  | JSON         | Especificaciones técnicas |
+| `registration_date` | DateTime   | Fecha de registro del activo |
+| `lifespan`        | Int         | Vida útil estimada del activo |
+| `depreciation_method` | Enum   | Método de depreciación |
+
+### **Branch (Sucursal)**
+Define las sucursales donde están almacenados los activos.
+
+| Campo       | Tipo de Dato | Descripción |
+|------------|------------|-------------|
+| `id`       | Int (PK)   | Identificador único de la sucursal |
+| `name`     | String     | Nombre de la sucursal |
+| `address`  | String     | Dirección de la sucursal |
+| `city`     | String     | Ciudad donde se encuentra la sucursal |
+| `country`  | String     | País donde se encuentra la sucursal |
+
+### **Maintenance (Mantenimiento)**
+Registra los mantenimientos realizados a los activos.
+
+| Campo               | Tipo de Dato  | Descripción |
+|---------------------|-------------|-------------|
+| `id`               | Int (PK)     | Identificador único del mantenimiento |
+| `asset_id`         | Int (FK)     | Relación con el activo |
+| `maintenance_date` | DateTime     | Fecha del mantenimiento |
+| `description`      | String       | Descripción del mantenimiento |
+| `maintenance_type` | String       | Tipo de mantenimiento |
+| `responsible_id`   | Int (FK)     | Persona responsable del mantenimiento |
+| `observations`     | String       | Observaciones del mantenimiento |
+| `cost`            | Float        | Costo del mantenimiento |
+
+### **Transfer (Transferencias de Activos)**
+Registra los movimientos de activos entre sucursales.
+
+| Campo                  | Tipo de Dato  | Descripción |
+|------------------------|-------------|-------------|
+| `id`                  | Int (PK)     | Identificador único de la transferencia |
+| `asset_id`            | Int (FK)     | Activo transferido |
+| `origin_branch_id`    | Int (FK)     | Sucursal de origen |
+| `destination_branch_id` | Int (FK)   | Sucursal de destino |
+| `transfer_date`       | DateTime     | Fecha de la transferencia |
+| `responsible_id`      | Int (FK)     | Persona responsable de la transferencia |
+| `observations`        | String       | Observaciones sobre la transferencia |
+| `status`              | Enum         | Estado de la transferencia |
+
+### **User y Role (Usuarios y Roles)**
+Gestión de usuarios del sistema y sus roles.
+
+| Campo      | Tipo de Dato | Descripción |
+|-----------|------------|-------------|
+| `id`      | Int (PK)   | Identificador único del usuario |
+| `username`| String     | Nombre de usuario |
+| `email`   | String (unique) | Correo electrónico del usuario |
+| `password` | String    | Contraseña cifrada del usuario |
+| `roles`   | Relación   | Relación con los roles |
+
+| Campo  | Tipo de Dato | Descripción |
+|--------|------------|-------------|
+| `id`   | Int (PK)   | Identificador único del rol |
+| `role` | String     | Nombre del rol (admin, usuario, etc.) |
+| `users` | Relación  | Relación con los usuarios |
+
+### **Depreciation (Depreciación)**
+Calcula la depreciación de los activos.
+
+| Campo                 | Tipo de Dato  | Descripción |
+|----------------------|-------------|-------------|
+| `id`                | Int (PK)     | Identificador único de la depreciación |
+| `asset_id`          | Int (FK)     | Activo asociado a la depreciación |
+| `depreciation_value` | Float        | Valor de la depreciación |
+| `date`              | DateTime     | Fecha de la depreciación |
 
 ## Funcionalidades
 
